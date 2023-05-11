@@ -60,7 +60,6 @@ class Algorithms(object):
         self.typeField[self.AMask]= 1
         self.typeField[self.BMask]= 2
         self.typeField[self.CMask]= 3
-
     
     def updateStep(self, A, B, C):
 
