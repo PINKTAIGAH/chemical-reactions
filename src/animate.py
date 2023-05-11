@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import matplotlib
+import matplotlib.cm as cm
 import numpy as np
 
 class Animate(object):
@@ -7,33 +7,32 @@ class Animate(object):
 # Animate a simulation that returns an image without tying matplotlib to 
 # simulation steps.
 
-    def __init__(self, A, B, C):
+    def __init__(self, a, b, c):
     #=======================================================
     # Initialise figure and inital frame of animation
-    
-        self.findInitialFrame(A, B, C)
+
+        self.findInitialFrame(a, b, c)
         self.fig= plt.figure()
-        self.im= plt.imshow(self.initialFrame, animated=True, cmap= 'magma')
-        plt.colorbar()
+        self.im= plt.imshow(self.initialFrame, animated=True, cmap= 'gnuplot', vmin=0, vmax= 3)
     
     def drawImage(self, lattice_array):
     #=======================================================
     # Draw frame of the animation
 
         plt.cla()
-        self.im= plt.imshow(lattice_array, animated= True, cmap= 'magma')
+        self.im= plt.imshow(lattice_array, animated= True, cmap= 'gnuplot', vmin=0, vmax= 3)
         plt.draw()
         plt.pause(0.0001)
 
-    def findInitialFrame(self, A, B, C):
+    def findInitialFrame(self, a, b, c):
         
-        totalConcenteration= np.dstack((A, B, C, 1-A-B-C))
+        totalConcenteration= np.dstack((a, b, c, 1-a-b-c))
         maximumConcentration= np.amax(totalConcenteration, axis=2)
-        AMask= maximumConcentration==A
-        BMask= maximumConcentration==B
-        CMask= maximumConcentration==C
+        aMask= maximumConcentration==a
+        bMask= maximumConcentration==b
+        cMask= maximumConcentration==c
         
-        self.initialFrame= np.zeros(A.shape)
-        self.initialFrame[AMask]= 1
-        self.initialFrame[BMask]= 2
-        self.initialFrame[CMask]= 3
+        self.initialFrame= np.zeros(a.shape)
+        self.initialFrame[aMask]= 1
+        self.initialFrame[bMask]= 2
+        self.initialFrame[cMask]= 3
