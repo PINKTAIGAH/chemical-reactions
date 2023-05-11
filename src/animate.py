@@ -10,27 +10,18 @@ class Animate(object):
     def __init__(self, A, B, C):
     #=======================================================
     # Initialise figure and inital frame of animation
-
-        self.customColorMap()
+    
         self.findInitialFrame(A, B, C)
         self.fig= plt.figure()
-        self.im= plt.imshow(self.initialFrame, animated=True, cmap= self.cmap)
+        self.im= plt.imshow(self.initialFrame, animated=True, cmap= 'magma')
         plt.colorbar()
-
-    def customColorMap(self):
-        cvals  = [0, 1, 2, 3]
-        colors = ["gray","red","green", "blue"]
-
-        norm=plt.Normalize(min(cvals),max(cvals))
-        tuples = list(zip(map(norm,cvals), colors))
-        self.cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", tuples)
     
     def drawImage(self, lattice_array):
     #=======================================================
     # Draw frame of the animation
 
         plt.cla()
-        self.im= plt.imshow(lattice_array, animated= True, cmap= self.cmap)
+        self.im= plt.imshow(lattice_array, animated= True, cmap= 'magma')
         plt.draw()
         plt.pause(0.0001)
 

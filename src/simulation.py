@@ -6,7 +6,7 @@ from observables import Observables
 
 class Simulation(object):
 
-    def __init__(self, N, p,q, D, deltaT, deltaX):
+    def __init__(self, N, p,q, D, deltaT, deltaX, nStep):
         
         self.N= N
         self.updateFrequency= 10    # in sweeps
@@ -53,7 +53,7 @@ class Simulation(object):
         self.CFracArray.append(fracC)
 
 if __name__ == '__main__':
-    simulation= Simulation(50, 0.5, 1, 1, 0.5, 3)
+    simulation= Simulation(50, 0.5, 1, 1, 0.1, 1, 10000)
     simulation.runSimulation()
 
 

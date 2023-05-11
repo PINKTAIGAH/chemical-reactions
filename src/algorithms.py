@@ -2,75 +2,82 @@ import numpy as np
 
 class Algorithms(object):
 
-    def __init__(self, N, p,q, D, deltaT, deltaX):
+    def __init__(self, N, p, q, D, deltaT, deltaX):
         
         self.N= N
         self.p= p
         self.q= q
         self.D= D
         self.deltaT= deltaT
-        self.deltaX= deltaX
+        self.deltaX= deltaX   
+    
+    def laplacian1D(self, arr: np.ndarray):
+           
+        return np.roll(arr, +1, axis=0) + np.roll(arr, -1, axis=0) - 2*arr
+    
+    def laplacian2D(self, arr: np.ndarray):
+           
+        return np.roll(arr, +1, axis=0) + np.roll(arr, -1, axis=0) + \
+            np.roll(arr, +1, axis=1) + np.roll(arr, -1, axis=1) - 4*arr
+    
+    def laplacian3D(self, arr: np.ndarray):
+           
+        return np.roll(arr, +1, axis=0) + np.roll(arr, -1, axis=0) + \
+            np.roll(arr, +1, axis=1) + np.roll(arr, -1, axis=1) +\
+            np.roll(arr, +1, axis=2) + np.roll(arr, -1, axis=2) - 6*arr
+    
+    def partialX(self, arr: np.ndarray):
 
-    def updateA(self):
-
-        up= np.roll(self.oldA, -1, axis=0)
-        down= np.roll(self.oldA, +1, axis=0)
-        right= np.roll(self.oldA, +1, axis=1)
-        left= np.roll(self.oldA, -1, axis=1)
-        
-        self.A= self.oldA + (self.D*self.deltaT/self.deltaX**2)*(up+down+left+right-4*self.oldA) +\
-                        self.q*self.oldA*(1-self.oldA-self.oldB-self.oldC) - self.p*self.oldA*self.oldC
-
-    def updateB(self):
-
-        up= np.roll(self.oldB, -1, axis=0)
-        down= np.roll(self.oldB, +1, axis=0)
-        right= np.roll(self.oldB, +1, axis=1)
-        left= np.roll(self.oldB, -1, axis=1)
-        self.B= self.oldB + (self.D*self.deltaT/self.deltaX**2)*(up+down+left+right-4*self.oldB) +\
-                        self.q*self.oldB*(1-self.oldA-self.oldB-self.oldC) - self.p*self.oldA*self.oldB  
-
-
-    def updateC(self):
-
-        up= np.roll(self.oldC, -1, axis=0)
-        down= np.roll(self.oldC, +1, axis=0)
-        right= np.roll(self.oldC, +1, axis=1)
-        left= np.roll(self.oldC, -1, axis=1)
-        self.C= self.oldC + (self.D*self.deltaT/self.deltaX**2)*(up+down+left+right-4*self.oldC) +\
-                        self.q*self.oldC*(1-self.oldA-self.oldB-self.oldC) - self.p*self.oldC*self.oldB  
+        return (np.roll(arr, -1, axis=0) - np.roll(arr, +1, axis=0))/(2*self.deltaX)
    
+    def updateA(self, a, b, c):
+   
+        self.a += self.deltaT * (self.D/self.deltaX**2)*self.laplacian2D(a) + \
+            self.q*a*(1-a-b-c) - self.p*a*c
+    
+    def updateB(self, a, b, c):
+   
+        self.b +=self.deltaT * (self.D/self.deltaX**2)*self.laplacian2D(b) + \
+            self.q*b*(1-a-b-c) - self.p*a*b
+        
+    def updateC(self, a, b, c):
+   
+        self.c += self.deltaT * (self.D/self.deltaX**2)*self.laplacian2D(c) + \
+            self.q*c*(1-a-b-c) - self.p*b*c
+    
     def updateConcentrations(self):
 
-        self.updateA()
-        self.updateB()
-        self.updateC()
+        self.aCurr, self.bCurr, self.cCurr= self.a.copy(), self.b.copy(), self.c.copy()
+        self.updateA(self.aCurr, self.bCurr, self.cCurr)
+        self.updateB(self.aCurr, self.bCurr, self.cCurr)
+        self.updateC(self.aCurr, self.bCurr, self.cCurr)
 
     def findMaximumConcentration(self):
 
-        totalConcenteration= np.dstack((self.A, self.B, self.C, 1-self.A-self.B-self.C))
+        self.d= 1- self.a - self.b - self.c
+        totalConcenteration= np.dstack((self.a, self.b, self.c, self.d))
         maximumConcentration= np.amax(totalConcenteration, axis=2)
-        self.AMask= maximumConcentration==self.A
-        self.BMask= maximumConcentration==self.B
-        self.CMask= maximumConcentration==self.C
+        self.AMask= maximumConcentration==self.a
+        self.BMask= maximumConcentration==self.b
+        self.CMask= maximumConcentration==self.c
         
-    def generateTypeField(self):
+    def generateTau(self):
 
-        self.typeField= np.zeros((self.N, self.N))
-        self.typeField[self.AMask]= 1
-        self.typeField[self.BMask]= 2
-        self.typeField[self.CMask]= 3
+        self.tau= np.zeros((self.N, self.N))
+        self.tau[self.AMask]= 1
+        self.tau[self.BMask]= 2
+        self.tau[self.CMask]= 3
     
-    def updateStep(self, A, B, C):
+    def updateStep(self, a, b, c):
 
-        self.oldA= A
-        self.oldB= B
-        self.oldC= C
+        self.a= a
+        self.b= b
+        self.c= c
         self.updateConcentrations()
         self.findMaximumConcentration()
-        self.generateTypeField()
+        self.generateTau()  
 
-        return self.A, self.B, self.C, self.typeField
+        return self.a, self.b, self.c, self.tau
         
 
    
