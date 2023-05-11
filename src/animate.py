@@ -12,15 +12,14 @@ class Animate(object):
 
         self.cmap= str(colourmap)
         self.fig= plt.figure()
-        self.im= plt.imshow(lattice_array, animated=True, cmap= self.cmap)
-        plt.colorbar()
+        self.im= plt.imshow(lattice_array, animated=True)
 
     def drawImage(self, lattice_array):
     #=======================================================
     # Draw frame of the animation
 
         plt.cla()
-        self.im= plt.imshow(lattice_array, animated= True, cmap= self.cmap)
+        self.im= plt.imshow(lattice_array, animated= True)
         plt.draw()
         plt.pause(0.0001)
 
