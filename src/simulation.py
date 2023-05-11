@@ -1,4 +1,5 @@
 import numpy as np
+from animate import Animate
 
 class Simulation(object):
 
@@ -11,6 +12,12 @@ class Simulation(object):
         self.deltaT= deltaT
         self.deltaX= deltaX
 
-    def generateInitArray(self):
+    def generateInitArrays(self):
 
-        self.array= np.random.uniform(low= 0, hifh= 1/3, size=(self.N, self.N))
+        self.A= np.random.uniform(low= 0, high= 1/3, size=(self.N, self.N))
+        self.B= np.random.uniform(low= 0, high= 1/3, size=(self.N, self.N))
+        self.C= np.random.uniform(low= 0, high= 1/3, size=(self.N, self.N))
+
+    def runSimulation(self):
+
+        self.generateInitArrays()
