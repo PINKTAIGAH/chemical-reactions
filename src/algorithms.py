@@ -25,9 +25,19 @@ class Algorithms(object):
         return (np.roll(arr, 1, axis=0) + np.roll(arr, 1, axis=1) +  np.roll(arr, 1, axis=2) +\
         np.roll(arr, -1, axis=0) + np.roll(arr, -1, axis=1) + np.roll(arr, -1, axis=2) - 6 * arr) / self.deltaX**2
     
-    def partialX(self, arr: np.ndarray):
+    def grad1D(self, arr: np.ndarray):
 
-        return (np.roll(arr, -1, axis=0) - np.roll(arr, +1, axis=0))/(2*self.deltaX)
+        return (np.roll(arr, 1, axis=0) - np.roll(arr, -1, axis=0))/(2*self.deltaX)
+
+    def grad2D(self, arr: np.ndarray):
+
+        return (np.roll(arr, 1, axis=0) + np.roll(arr, 1, axis=1) + \
+                np.roll(arr, -1, axis=0) + np.roll(arr, -1, axis=0))/2*self.deltaX
+   
+    def grad3D(self, arr: np.ndarray):
+
+        return (np.roll(arr, 1, axis=0) + np.roll(arr, 1, axis=1) + np.roll(arr, 1, axis=2) + \
+                np.roll(arr, -1, axis=0) + np.roll(arr, -1, axis=0) + np.roll(arr, -1, axis=2))/2*self.deltaX
    
     def updateA(self, a, b, c):
    
